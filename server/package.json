@@ -1,0 +1,36 @@
+{
+  "name": "traffic-flower-server",
+  "version": "1.0.0",
+  "description": "Traffic Flower Backend API",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "seed": "node prisma/seed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.90.1",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.16.0",
+    "nodemailer": "^7.0.12",
+    "socket.io": "^4.8.3",
+    "ssh2": "^1.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
