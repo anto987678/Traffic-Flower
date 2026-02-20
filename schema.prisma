@@ -1,0 +1,272 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@map("USER")
+}
+
+model Intersection {
+  id      Int     @id @default(autoincrement())
+  name    String
+  sector  Int
+  lat     Float?
+  lng     Float?
+
+  semaphors         Semaphor[]
+  busStations       BusStation[]
+  tramStations      TramStation[]
+  troleibusStations TroleibusStation[]
+
+  @@map("INTERSECTION")
+}
+
+model Semaphor {
+  id             Int @id @default(autoincrement())
+  type           String
+  street         String
+  sense          String
+  intersectionId Int
+
+  intersection Intersection @relation(fields: [intersectionId], references: [id], onDelete: Cascade)
+
+  crossingsCar        CrossingCar[]
+  crossingsBus        CrossingBus[]
+  crossingsTram       CrossingTram[]
+  crossingsTroleibus  CrossingTroleibus[]
+  crossingsPerson     CrossingPerson[]
+  changings           Changing[]
+
+  @@map("SEMAPHOR")
+}
+
+
+model BusStation {
+  id             Int @id @default(autoincrement())
+  name           String
+  sense          String
+  no_people      Int
+  no_buses       Int
+  intersectionId Int
+
+  intersection Intersection @relation(fields: [intersectionId], references: [id], onDelete: Cascade)
+  stopped        StoppedBus[]
+
+  @@map("BUS_STATION")
+}
+
+model TramStation {
+  id             Int @id @default(autoincrement())
+  name           String
+  sense          String
+  no_people      Int
+  no_trams       Int
+  intersectionId Int
+
+  intersection Intersection @relation(fields: [intersectionId], references: [id], onDelete: Cascade)
+  stopped        StoppedTram[]
+
+  @@map("TRAM_STATION")
+}
+
+model TroleibusStation {
+  id              Int @id @default(autoincrement())
+  name            String
+  sense           String
+  no_people       Int
+  no_troleibuses  Int
+  intersectionId  Int
+
+  intersection Intersection @relation(fields: [intersectionId], references: [id], onDelete: Cascade)
+  stopped        StoppedTroleibus[]
+
+  @@map("TROLEIBUS_STATION")
+}
+
+
+model Car {
+  id    Int    @id @default(autoincrement())
+  color String
+  regNr String @unique
+
+  crossings CrossingCar[]
+
+  @@map("CAR")
+}
+
+model Bus {
+  id    Int    @id @default(autoincrement())
+  regNr String @unique
+  line  String
+
+  crossings CrossingBus[]
+  stopped   StoppedBus[]
+
+  @@map("BUS")
+}
+
+model Tram {
+  id    Int    @id @default(autoincrement())
+  regNr String @unique
+  line  String
+
+  crossings CrossingTram[]
+  stopped   StoppedTram[]
+
+  @@map("TRAM")
+}
+
+model Troleibus {
+  id    Int    @id @default(autoincrement())
+  regNr String @unique
+  line  String
+
+  crossings CrossingTroleibus[]
+  stopped   StoppedTroleibus[]
+
+  @@map("TROLEIBUS")
+}
+
+
+model Person {
+  id     Int    @id @default(autoincrement())
+  gender String
+
+  crossings CrossingPerson[]
+
+  @@map("PERSON")
+}
+
+
+model CrossingCar {
+  id         Int      @id @default(autoincrement())
+  speed      Float?
+  timestamp  DateTime @default(now())
+  semaphorId Int
+  carId      Int
+
+  semaphor Semaphor @relation(fields: [semaphorId], references: [id], onDelete: Cascade)
+  car      Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  @@map("CROSSING_CAR")
+}
+
+model CrossingBus {
+  id         Int      @id @default(autoincrement())
+  speed      Float?
+  timestamp  DateTime @default(now())
+  semaphorId Int
+  busId      Int
+
+  semaphor Semaphor @relation(fields: [semaphorId], references: [id], onDelete: Cascade)
+  bus      Bus      @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  @@map("CROSSING_BUS")
+}
+
+model CrossingTram {
+  id         Int      @id @default(autoincrement())
+  speed      Float?
+  timestamp  DateTime @default(now())
+  semaphorId Int
+  tramId     Int
+
+  semaphor Semaphor @relation(fields: [semaphorId], references: [id], onDelete: Cascade)
+  tram     Tram     @relation(fields: [tramId], references: [id], onDelete: Cascade)
+
+  @@map("CROSSING_TRAM")
+}
+
+model CrossingTroleibus {
+  id          Int      @id @default(autoincrement())
+  speed       Float?
+  timestamp   DateTime @default(now())
+  semaphorId  Int
+  troleibusId Int
+
+  semaphor  Semaphor  @relation(fields: [semaphorId], references: [id], onDelete: Cascade)
+  troleibus Troleibus @relation(fields: [troleibusId], references: [id], onDelete: Cascade)
+
+  @@map("CROSSING_TROLEIBUS")
+}
+
+model CrossingPerson {
+  id         Int      @id @default(autoincrement())
+  timestamp  DateTime @default(now())
+  semaphorId Int
+  personId   Int
+
+  semaphor Semaphor @relation(fields: [semaphorId], references: [id], onDelete: Cascade)
+  person   Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@map("CROSSING_PERSON")
+}
+
+model StoppedBus {
+  id              Int      @id @default(autoincrement())
+  stoppedMinutes  Int
+  expectedArrival DateTime
+  actualArrival   DateTime @default(now())
+  busId           Int
+  stationId       Int
+
+  bus     Bus        @relation(fields: [busId], references: [id], onDelete: Cascade)
+  station BusStation @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  @@map("STOPPED_BUS")
+}
+
+model StoppedTram {
+  id              Int      @id @default(autoincrement())
+  stoppedMinutes  Int
+  expectedArrival DateTime
+  actualArrival   DateTime @default(now())
+  tramId          Int
+  stationId       Int
+
+  tram     Tram        @relation(fields: [tramId], references: [id], onDelete: Cascade)
+  station TramStation @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  @@map("STOPPED_TRAM")
+}
+
+model StoppedTroleibus {
+  id              Int      @id @default(autoincrement())
+  stoppedMinutes  Int
+  expectedArrival DateTime
+  actualArrival   DateTime @default(now())
+  troleibusId     Int
+  stationId       Int
+
+  troleibus Troleibus       @relation(fields: [troleibusId], references: [id], onDelete: Cascade)
+  station   TroleibusStation @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  @@map("STOPPED_TROLEIBUS")
+}
+
+model Changing {
+  id         Int      @id @default(autoincrement())
+  color      String
+  timestamp  DateTime @default(now())
+  semaphorId Int
+
+  semaphor Semaphor @relation(fields: [semaphorId], references: [id], onDelete: Cascade)
+
+  @@map("CHANGING")
+}

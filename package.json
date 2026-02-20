@@ -1,0 +1,21 @@
+{
+  "name": "traffic-flow-er",
+  "version": "1.0.0",
+  "description": "A comprehensive full-stack application for monitoring and analyzing traffic flow, public transport schedules, and traffic violations in a smart city environment.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ale-cutie/traffic-Flow-ER.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ale-cutie/traffic-Flow-ER/issues"
+  },
+  "homepage": "https://github.com/Ale-cutie/traffic-Flow-ER#readme"
+}
